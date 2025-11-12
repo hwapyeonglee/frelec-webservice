@@ -24,13 +24,19 @@ public class PostsApiController {
     @PutMapping("/api/v1/posts/{id}")
     public ResponseEntity<Long> update(@PathVariable Long id,
                                        @RequestBody PostsUpdateRequestDto requestDto) {
-        final var body = postsService.update(id, requestDto);
-        return ResponseEntity.status(HttpStatus.OK).body(body);
+        final var postId = postsService.update(id, requestDto);
+        return ResponseEntity.status(HttpStatus.OK).body(postId);
     }
 
     @GetMapping("/api/v1/posts/{id}")
     public ResponseEntity<PostsResponseDto> findById(@PathVariable Long id) {
         final var body = postsService.findById(id);
         return ResponseEntity.status(HttpStatus.OK).body(body);
+    }
+
+    @DeleteMapping("/api/v1/posts/{id}")
+    public ResponseEntity<Long> delete(@PathVariable Long id) {
+        postsService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(id);
     }
 }

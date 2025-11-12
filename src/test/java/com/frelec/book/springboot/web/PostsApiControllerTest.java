@@ -34,7 +34,7 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    public void RegisterPosts() throws Exception {
+    public void registerPosts() throws Exception {
         // given
         final var title = "title";
         final var content = "content";
@@ -62,7 +62,7 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    public void UpdatePosts() {
+    public void updatePosts() {
         //given
         final var savedPosts = postsRepository.save(Posts.builder()
                 .title("title")
@@ -93,5 +93,29 @@ public class PostsApiControllerTest {
         final var all = postsRepository.findAll();
         assertThat(all.getFirst().getTitle()).isEqualTo(expectedTitle);
         assertThat(all.getFirst().getContent()).isEqualTo(expectedContent);
+    }
+
+    @Test
+    public void deletePosts() {
+        //given
+        final var post = postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build());
+
+        final var idToDelete = post.getId();
+
+        final var url = "http://localhost:" + port + "/api/v1/posts/" + idToDelete;
+
+        // when
+        final var responseEntity = restTemplate.exchange(url, HttpMethod.DELETE, null, Long.class);
+
+        // then
+        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+
+        final var deleted = postsRepository.findById(idToDelete);
+        assertThat(deleted).isEmpty();
     }
 }
